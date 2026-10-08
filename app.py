@@ -1,226 +1,130 @@
-from flask import Flask, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
+# In-memory application data
 members = []
 workouts = []
 
 
 @app.route("/")
 def home():
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>ACEest Fitness & Gym</h1>
-        <h2>Fitness & Gym Management System</h2>
-
-        <p>Welcome to ACEest Fitness & Gym.</p>
-
-        <h3>Management Options</h3>
-
-        <ul>
-            <li><a href="/members">View Members</a></li>
-            <li><a href="/members/add">Register Member</a></li>
-            <li><a href="/workouts">View Workouts</a></li>
-            <li><a href="/workouts/add">Add Workout</a></li>
-            <li><a href="/about">About ACEest</a></li>
-        </ul>
-    </body>
-    </html>
-    """
+    return render_template(
+        "index.html",
+        member_count=len(members),
+        workout_count=len(workouts)
+    )
 
 
 @app.route("/about")
 def about():
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>About - ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>About ACEest Fitness & Gym</h1>
-
-        <p>
-            ACEest Fitness & Gym is a simple fitness management
-            application developed as part of a DevOps project.
-        </p>
-
-        <a href="/">Home</a>
-    </body>
-    </html>
-    """
+    return render_template("about.html")
 
 
 @app.route("/members")
 def view_members():
-    member_list = ""
-
-    if members:
-        for member in members:
-            member_list += f"""
-            <li>
-                {member['name']} -
-                Age: {member['age']} -
-                Weight: {member['weight']} kg -
-                Goal: {member['goal']}
-            </li>
-            """
-    else:
-        member_list = "<li>No members registered yet.</li>"
-
-    return f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Members - ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>Gym Members</h1>
-
-        <ul>
-            {member_list}
-        </ul>
-
-        <a href="/members/add">Register New Member</a>
-        <br>
-        <a href="/">Home</a>
-    </body>
-    </html>
-    """
+    return render_template("members.html", members=members)
 
 
 @app.route("/members/add", methods=["GET", "POST"])
 def add_member():
     if request.method == "POST":
-        member = {
-            "name": request.form.get("name"),
-            "age": request.form.get("age"),
-            "weight": request.form.get("weight"),
-            "goal": request.form.get("goal")
-        }
 
-        members.append(member)
+        name = request.form.get("name", "").strip()
+        age = request.form.get("age", "").strip()
+        weight = request.form.get("weight", "").strip()
+        goal = request.form.get("goal", "").strip()
+
+        if not name or not age or not weight or not goal:
+            return render_template(
+                "add_member.html",
+                error="All fields are required.",
+                form=request.form
+            )
+
+        try:
+            age = int(age)
+            weight = float(weight)
+        except ValueError:
+            return render_template(
+                "add_member.html",
+                error="Age must be a whole number and weight must be a number.",
+                form=request.form
+            )
+
+        if age <= 0 or weight <= 0:
+            return render_template(
+                "add_member.html",
+                error="Age and weight must be greater than zero.",
+                form=request.form
+            )
+
+        members.append({
+            "name": name,
+            "age": age,
+            "weight": weight,
+            "goal": goal
+        })
 
         return redirect(url_for("view_members"))
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Add Member - ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>Register New Member</h1>
-
-        <form method="POST">
-
-            <label>Name:</label><br>
-            <input type="text" name="name" required><br><br>
-
-            <label>Age:</label><br>
-            <input type="number" name="age" required><br><br>
-
-            <label>Weight (kg):</label><br>
-            <input type="number" step="0.1" name="weight" required><br><br>
-
-            <label>Fitness Goal:</label><br>
-            <input type="text" name="goal" required><br><br>
-
-            <button type="submit">Register Member</button>
-
-        </form>
-
-        <br>
-        <a href="/">Home</a>
-    </body>
-    </html>
-    """
+    return render_template("add_member.html", form={})
 
 
 @app.route("/workouts")
 def view_workouts():
-    workout_list = ""
-
-    if workouts:
-        for workout in workouts:
-            workout_list += f"""
-            <li>
-                {workout['name']} -
-                Duration: {workout['duration']} minutes -
-                Calories: {workout['calories']}
-            </li>
-            """
-    else:
-        workout_list = "<li>No workouts recorded yet.</li>"
-
-    return f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Workouts - ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>Workout Records</h1>
-
-        <ul>
-            {workout_list}
-        </ul>
-
-        <a href="/workouts/add">Add Workout</a>
-        <br>
-        <a href="/">Home</a>
-    </body>
-    </html>
-    """
+    return render_template("workouts.html", workouts=workouts)
 
 
 @app.route("/workouts/add", methods=["GET", "POST"])
 def add_workout():
     if request.method == "POST":
-        workout = {
-            "name": request.form.get("name"),
-            "duration": request.form.get("duration"),
-            "calories": request.form.get("calories")
-        }
 
-        workouts.append(workout)
+        name = request.form.get("name", "").strip()
+        duration = request.form.get("duration", "").strip()
+        calories = request.form.get("calories", "").strip()
+
+        if not name or not duration or not calories:
+            return render_template(
+                "add_workout.html",
+                error="All fields are required.",
+                form=request.form
+            )
+
+        try:
+            duration = int(duration)
+            calories = int(calories)
+        except ValueError:
+            return render_template(
+                "add_workout.html",
+                error="Duration and calories must be numbers.",
+                form=request.form
+            )
+
+        if duration <= 0 or calories < 0:
+            return render_template(
+                "add_workout.html",
+                error="Duration must be greater than zero and calories cannot be negative.",
+                form=request.form
+            )
+
+        workouts.append({
+            "name": name,
+            "duration": duration,
+            "calories": calories
+        })
 
         return redirect(url_for("view_workouts"))
 
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Add Workout - ACEest Fitness & Gym</title>
-    </head>
-    <body>
-        <h1>Add Workout</h1>
+    return render_template("add_workout.html", form={})
 
-        <form method="POST">
 
-            <label>Workout Name:</label><br>
-            <input type="text" name="name" required><br><br>
-
-            <label>Duration (minutes):</label><br>
-            <input type="number" name="duration" required><br><br>
-
-            <label>Calories Burned:</label><br>
-            <input type="number" name="calories" required><br><br>
-
-            <button type="submit">Add Workout</button>
-
-        </form>
-
-        <br>
-        <a href="/">Home</a>
-    </body>
-    </html>
-    """
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "healthy",
+        "application": "ACEest Fitness & Gym"
+    })
 
 
 if __name__ == "__main__":

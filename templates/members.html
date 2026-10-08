@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Members | ACEest Fitness & Gym{% endblock %}
+
+{% block content %}
+
+<div class="page-title-row">
+
+    <div>
+        <span class="section-label">MEMBERS</span>
+        <h1>Gym Members</h1>
+        <p>Manage registered members of ACEest Fitness & Gym.</p>
+    </div>
+
+    <a href="{{ url_for('add_member') }}" class="btn btn-primary">
+        + Register Member
+    </a>
+
+</div>
+
+
+<div class="table-card">
+
+    {% if members %}
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Age</th>
+                    <th>Weight</th>
+                    <th>Fitness Goal</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for member in members %}
+
+                <tr>
+
+                    <td>
+                        <div class="member-cell">
+                            <div class="avatar">
+                                {{ member.name[0]|upper }}
+                            </div>
+
+                            <strong>{{ member.name }}</strong>
+                        </div>
+                    </td>
+
+                    <td>{{ member.age }} years</td>
+
+                    <td>{{ member.weight }} kg</td>
+
+                    <td>
+                        <span class="goal-badge">
+                            {{ member.goal }}
+                        </span>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">👤</div>
+
+        <h2>No members yet</h2>
+
+        <p>
+            Start by registering your first gym member.
+        </p>
+
+        <a href="{{ url_for('add_member') }}" class="btn btn-primary">
+            Register First Member
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

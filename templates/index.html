@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | ACEest Fitness & Gym{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="eyebrow">FITNESS MANAGEMENT</span>
+
+        <h1>
+            Train smarter.<br>
+            <span>Live stronger.</span>
+        </h1>
+
+        <p>
+            Manage your gym members, track workouts and keep
+            your fitness operations organized from one place.
+        </p>
+
+        <div class="hero-actions">
+
+            <a href="{{ url_for('add_member') }}" class="btn btn-primary">
+                Register Member
+            </a>
+
+            <a href="{{ url_for('add_workout') }}" class="btn btn-secondary">
+                Add Workout
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="hero-visual">
+
+        <div class="fitness-circle">
+            <div class="fitness-icon">⚡</div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section-header">
+
+    <div>
+        <span class="section-label">OVERVIEW</span>
+        <h2>Gym at a glance</h2>
+    </div>
+
+    <a href="{{ url_for('health') }}" class="health-link">
+        ● System Healthy
+    </a>
+
+</section>
+
+
+<section class="stats-grid">
+
+    <div class="stat-card">
+
+        <div class="stat-icon member-icon">
+            👤
+        </div>
+
+        <div>
+            <p>Total Members</p>
+            <h3>{{ member_count }}</h3>
+            <span>Registered members</span>
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon workout-icon">
+            🏋
+        </div>
+
+        <div>
+            <p>Total Workouts</p>
+            <h3>{{ workout_count }}</h3>
+            <span>Workout records</span>
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon health-icon">
+            ✓
+        </div>
+
+        <div>
+            <p>System Status</p>
+            <h3 class="healthy-text">Healthy</h3>
+            <span>Application running</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="quick-section">
+
+    <div class="section-header">
+
+        <div>
+            <span class="section-label">QUICK ACTIONS</span>
+            <h2>What would you like to do?</h2>
+        </div>
+
+    </div>
+
+
+    <div class="action-grid">
+
+        <a href="{{ url_for('add_member') }}" class="action-card">
+
+            <div class="action-icon">+</div>
+
+            <div>
+                <h3>Register a Member</h3>
+                <p>Add a new member to the gym management system.</p>
+            </div>
+
+            <span class="arrow">→</span>
+
+        </a>
+
+
+        <a href="{{ url_for('add_workout') }}" class="action-card">
+
+            <div class="action-icon workout-action">⚡</div>
+
+            <div>
+                <h3>Record a Workout</h3>
+                <p>Add workout duration and calorie information.</p>
+            </div>
+
+            <span class="arrow">→</span>
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

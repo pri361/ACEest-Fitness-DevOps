@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Workouts | ACEest Fitness & Gym{% endblock %}
+
+{% block content %}
+
+<div class="page-title-row">
+
+    <div>
+        <span class="section-label">WORKOUTS</span>
+        <h1>Workout Records</h1>
+        <p>Track workout activities and fitness performance.</p>
+    </div>
+
+    <a href="{{ url_for('add_workout') }}" class="btn btn-primary">
+        + Add Workout
+    </a>
+
+</div>
+
+
+<div class="table-card">
+
+    {% if workouts %}
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Workout</th>
+                    <th>Duration</th>
+                    <th>Calories Burned</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for workout in workouts %}
+
+                <tr>
+
+                    <td>
+
+                        <div class="member-cell">
+
+                            <div class="avatar workout-avatar">
+                                ⚡
+                            </div>
+
+                            <strong>{{ workout.name }}</strong>
+
+                        </div>
+
+                    </td>
+
+                    <td>
+                        {{ workout.duration }} minutes
+                    </td>
+
+                    <td>
+                        <span class="calorie-badge">
+                            {{ workout.calories }} kcal
+                        </span>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">🏋</div>
+
+        <h2>No workouts recorded</h2>
+
+        <p>
+            Start tracking workouts by adding your first activity.
+        </p>
+
+        <a href="{{ url_for('add_workout') }}" class="btn btn-primary">
+            Add First Workout
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}ACEest Fitness & Gym{% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="{{ url_for('home') }}" class="brand">
+                <div class="brand-icon">A</div>
+
+                <div>
+                    <div class="brand-name">ACEest</div>
+                    <div class="brand-subtitle">FITNESS & GYM</div>
+                </div>
+            </a>
+
+            <nav class="nav-links">
+
+                <a href="{{ url_for('home') }}"
+                   class="{% if request.endpoint == 'home' %}active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('view_members') }}"
+                   class="{% if request.endpoint in ['view_members', 'add_member'] %}active{% endif %}">
+                    Members
+                </a>
+
+                <a href="{{ url_for('view_workouts') }}"
+                   class="{% if request.endpoint in ['view_workouts', 'add_workout'] %}active{% endif %}">
+                    Workouts
+                </a>
+
+                <a href="{{ url_for('about') }}"
+                   class="{% if request.endpoint == 'about' %}active{% endif %}">
+                    About
+                </a>
+
+            </nav>
+
+            <a href="{{ url_for('add_member') }}" class="nav-button">
+                + Add Member
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="main-container">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+            <strong>ACEest Fitness & Gym</strong>
+            <span> • Fitness Management System</span>
+        </div>
+
+    </footer>
+
+</body>
+</html>
