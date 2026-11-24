@@ -3,44 +3,40 @@ services:
   sonarqube-db:
     image: postgres:17
     container_name: aceest-sonarqube-db
-
     environment:
       POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:?Set SONAR_DB_PASSWORD in .env}
       POSTGRES_DB: sonarqube
-
     volumes:
       - sonar_db_data:/var/lib/postgresql/data
-
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sonar -d sonarqube"]
       interval: 10s
       timeout: 5s
       retries: 10
-
     restart: unless-stopped
 
   sonarqube:
     image: sonarqube:community
     container_name: aceest-sonarqube
-
     depends_on:
       sonarqube-db:
         condition: service_healthy
-
     ports:
       - "9000:9000"
-
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonarqube
       SONAR_JDBC_USERNAME: sonar
-      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD}
-
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:?Set SONAR_DB_PASSWORD in .env}
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072
+      nproc: 8192
     volumes:
       - sonar_data:/opt/sonarqube/data
       - sonar_extensions:/opt/sonarqube/extensions
       - sonar_logs:/opt/sonarqube/logs
-
     restart: unless-stopped
 
 volumes:
